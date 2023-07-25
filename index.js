@@ -7,16 +7,11 @@ function addTodo(appointment) {
   return axios.post(
     `https://crudcrud.com/api/d80733b2e3404af8b6d3c2874fcdb944/appointements`,
     appointment
-  )
+  );
 }
 function displayList() {
   getTodos().then((res) => {
     res.data.forEach((user) => {
-      const u = {
-        name: user.name,
-        mail: user.mail,
-        phone: user.phone,
-      };
       createUserLi(user);
     });
   });
@@ -53,29 +48,31 @@ function createUserLi(user) {
   cont.appendChild(newLi);
 }
 
-// selecting form to submit
-const frm = document.getElementById("form");
-class User {
-  constructor(name, mail, phone) {
-    this.mail = mail;
-    this.name = name;
-    this.phone = phone;
+window.addEventListener("DOMContentLoaded", (event) => {
+  displayList();
+  const frm = document.getElementById("form");
+  class User {
+    constructor(name, mail, phone) {
+      this.mail = mail;
+      this.name = name;
+      this.phone = phone;
+    }
   }
-}
 
-displayList();
-// listening if submit button is clicked
-frm.addEventListener("submit", (e) => {
-  e.preventDefault();
+  
+  // listening if submit button is clicked
+  frm.addEventListener("submit", (e) => {
+    e.preventDefault();
 
-  //   fetching the details of form if submitted
-  let name = document.getElementById("name").value;
-  let mail = document.getElementById("email").value;
-  let phone = document.getElementById("phone").value;
+    //   fetching the details of form if submitted
+    let name = document.getElementById("name").value;
+    let mail = document.getElementById("email").value;
+    let phone = document.getElementById("phone").value;
 
-  const user = new User(name, mail, phone);
+    const user = new User(name, mail, phone);
 
-  createUserLi(user);
+    createUserLi(user);
 
-  addTodo(user);
+    addTodo(user);
+  });
 });
