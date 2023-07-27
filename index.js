@@ -1,12 +1,31 @@
+class User {
+  constructor(name, mail, phone) {
+    this.mail = mail;
+    this.name = name;
+    this.phone = phone;
+  }
+}
 function getTodos() {
   return axios.get(
-    `https://crudcrud.com/api/d80733b2e3404af8b6d3c2874fcdb944/appointements`
+    `https://crudcrud.com/api/bcc6d499340248a6964118f796f6e284/appointements`
   );
 }
 function addTodo(appointment) {
   return axios.post(
-    `https://crudcrud.com/api/d80733b2e3404af8b6d3c2874fcdb944/appointements`,
+    `https://crudcrud.com/api/bcc6d499340248a6964118f796f6e284/appointements`,
     appointment
+  );
+}
+function removeTodo(id) {
+  return axios.delete(
+    `https://crudcrud.com/api/bcc6d499340248a6964118f796f6e284/appointements/${id}`
+  );
+}
+function updateTodo(id,user)
+{
+  return axios.patch(
+    `https://crudcrud.com/api/bcc6d499340248a6964118f796f6e284/appointements/${id}`,
+    user
   );
 }
 function displayList() {
@@ -14,6 +33,19 @@ function displayList() {
     res.data.forEach((user) => {
       createUserLi(user);
     });
+  });
+}
+async function deleteUser(mail) {
+  let id;
+  let users = await getTodos();
+  users.data.forEach((user) => {
+    if (user.mail === mail) {
+      id = user._id;
+    }
+  });
+
+  removeTodo(id).then((res) => {
+    console.log("delete succesfully");
   });
 }
 
@@ -47,19 +79,44 @@ function createUserLi(user) {
   const cont = document.querySelector(".li_container");
   cont.appendChild(newLi);
 }
+async function updateUser(mail) {
+  let id;
+  let u;
+  let users = await getTodos();
+  users.data.forEach((user) => {
+    if (user.mail === mail) {
+      u = user;
+      id = user._id;
+    }
+  });
+  document.getElementById("name").value = u.name;
+  document.getElementById("email").value = u.mail;
+  document.getElementById("phone").value = u.phone;
+
+  document.getElementById("form").addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    let name = document.getElementById("name").value;
+    let email = document.getElementById("email").value;
+    let phone = document.getElementById("phone").value;
+
+    let newUser = new User(name,email, phone);
+    updateTodo(id, newUser).then(()=>
+    {
+      createUserLi(newUser);
+    });
+    
+
+    
+
+
+  });
+}
 
 window.addEventListener("DOMContentLoaded", (event) => {
   displayList();
   const frm = document.getElementById("form");
-  class User {
-    constructor(name, mail, phone) {
-      this.mail = mail;
-      this.name = name;
-      this.phone = phone;
-    }
-  }
 
-  
   // listening if submit button is clicked
   frm.addEventListener("submit", (e) => {
     e.preventDefault();
@@ -74,5 +131,15 @@ window.addEventListener("DOMContentLoaded", (event) => {
     createUserLi(user);
 
     addTodo(user);
+  });
+  document.querySelector(".container").addEventListener("click", (e) => {
+    let searchMail = e.target.parentElement.firstChild.textContent.trim();
+    if (e.target.classList.contains("delete")) {
+      deleteUser(searchMail);
+      e.target.parentElement.remove();
+    } else if (e.target.classList.contains("edit")) {
+      updateUser(searchMail);
+      e.target.parentElement.remove();
+    }
   });
 });
