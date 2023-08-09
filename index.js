@@ -7,26 +7,20 @@ class User {
 }
 function getTodos() {
   return axios.get(
-    `https://crudcrud.com/api/bcc6d499340248a6964118f796f6e284/appointements`
+    `/api/users`
   );
 }
 function addTodo(appointment) {
   return axios.post(
-    `https://crudcrud.com/api/bcc6d499340248a6964118f796f6e284/appointements`,
-    appointment
+    `/api/users,
+    appointment`
   );
 }
 function removeTodo(id) {
-  return axios.delete(
-    `https://crudcrud.com/api/bcc6d499340248a6964118f796f6e284/appointements/${id}`
-  );
+  return axios.delete(`/api/users/${id}`);
 }
-function updateTodo(id,user)
-{
-  return axios.patch(
-    `https://crudcrud.com/api/bcc6d499340248a6964118f796f6e284/appointements/${id}`,
-    user
-  );
+function updateTodo(id, user) {
+  return axios.put(`/api/users/${id}`, user);
 }
 function displayList() {
   getTodos().then((res) => {
@@ -92,7 +86,6 @@ async function updateUser(mail) {
   document.getElementById("name").value = u.name;
   document.getElementById("email").value = u.mail;
   document.getElementById("phone").value = u.phone;
-
   document.getElementById("form").addEventListener("submit", (e) => {
     e.preventDefault();
 
@@ -100,16 +93,8 @@ async function updateUser(mail) {
     let email = document.getElementById("email").value;
     let phone = document.getElementById("phone").value;
 
-    let newUser = new User(name,email, phone);
-    updateTodo(id, newUser).then(()=>
-    {
-      createUserLi(newUser);
-    });
-    
-
-    
-
-
+    let newUser = new User(name, email, phone);
+    updateTodo(id, newUser);
   });
 }
 
